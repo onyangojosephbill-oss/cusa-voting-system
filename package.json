@@ -1,0 +1,13 @@
+{
+  "name": "cusa-voting-system",
+  "version": "1.0.0",
+  "description": "CUSA Verifiable Digital Ballot — student election voting system for Chuka University",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}

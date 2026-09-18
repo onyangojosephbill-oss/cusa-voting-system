@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CUSA Verifiable Digital Ballot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1c2b45; --navy-deep: #101a2c; --soft: #5c6b85; --rule: #d7deea;
+    --paper: #f4f2ec; --card: #ffffff; --maroon: #7d2e35; --maroon-deep: #5e2028;
+    --gold: #a9822f; --green: #3f6b4a; --green-bg: #e8f0e7; --red-bg: #f5e6e3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--navy); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 28px 18px 90px; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; margin: 0; }
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .seal { width: 42px; height: 42px; border-radius: 50%; border: 1.6px solid var(--navy); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; flex-shrink: 0; }
+  .brand h1 { font-size: 19px; }
+  .brand p { margin: 0; font-size: 12.5px; color: var(--soft); }
+  nav.tabs { display: flex; gap: 3px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 3px; flex-wrap: wrap; }
+  nav.tabs button { border: none; background: transparent; color: var(--soft); font: inherit; font-size: 12.5px; font-weight: 600; padding: 7px 11px; border-radius: 6px; cursor: pointer; }
+  nav.tabs button.active { background: var(--navy); color: #fff; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 24px; margin-bottom: 14px; box-shadow: 0 1px 0 rgba(28,43,69,0.05); }
+  .desc { color: var(--soft); font-size: 13.5px; line-height: 1.55; margin: 6px 0 18px; }
+  label { display: block; font-size: 12.5px; font-weight: 600; color: var(--soft); margin-bottom: 6px; }
+  input[type=text], input[type=password], textarea { width: 100%; font: inherit; font-size: 15px; padding: 11px 13px; border: 1px solid var(--rule); border-radius: 7px; background: var(--paper); color: var(--navy); margin-bottom: 14px; }
+  textarea { min-height: 100px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; }
+  button.primary { background: var(--maroon); color: #fff; border: none; font: inherit; font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 7px; cursor: pointer; width: 100%; }
+  button.primary:hover { background: var(--maroon-deep); }
+  button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  button.ghost { background: transparent; border: 1px solid var(--rule); color: var(--navy); font: inherit; font-size: 12.5px; font-weight: 600; padding: 9px 13px; border-radius: 7px; cursor: pointer; }
+  button.link { background: none; border: none; color: var(--maroon); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0; }
+  .candidate { display: flex; align-items: center; gap: 11px; padding: 11px 13px; border: 1px solid var(--rule); border-radius: 8px; margin-bottom: 7px; cursor: pointer; background: var(--paper); }
+  .candidate.selected { border-color: var(--maroon); background: var(--red-bg); }
+  .candidate .name { font-weight: 600; font-size: 13.5px; }
+  .party { font-size: 10.5px; font-weight: 700; letter-spacing: .03em; color: var(--gold); margin-left: auto; text-transform: uppercase; }
+  .position-block { border-top: 1px solid var(--rule); padding-top: 16px; margin-top: 16px; }
+  .position-block:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .position-title { font-family: 'Fraunces', serif; font-size: 15.5px; font-weight: 600; margin-bottom: 3px; }
+  .position-hint { font-size: 12px; color: var(--soft); margin: 0 0 10px; }
+  .notice { padding: 12px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; margin-bottom: 14px; border: 1px solid transparent; }
+  .notice.error { background: var(--red-bg); color: var(--maroon-deep); border-color: var(--maroon); }
+  .notice.success { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+  .notice.info { background: var(--paper); color: var(--soft); border-color: var(--rule); }
+  .stamp { text-align: center; padding: 34px 16px; }
+  .stamp .mark { width: 62px; height: 62px; border-radius: 50%; border: 2px solid var(--green); color: var(--green); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 26px; }
+  .stamp p { color: var(--soft); font-size: 13.5px; max-width: 42ch; margin: 4px auto 0; }
+  .receipt-code { font-family: 'IBM Plex Mono', monospace; font-size: 15px; letter-spacing: .05em; background: var(--paper); border: 1px dashed var(--gold); padding: 8px 12px; border-radius: 6px; display: inline-block; margin-top: 8px; }
+  .result-row { margin-bottom: 12px; }
+  .r-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .r-name { font-weight: 600; } .r-count { color: var(--soft); font-variant-numeric: tabular-nums; }
+  .bar-track { height: 7px; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--maroon); }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 20px; border: 1px solid var(--rule); }
+  .status-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .status-pill.open .dot { background: var(--green); } .status-pill.closed .dot { background: var(--maroon); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .row.between { justify-content: space-between; }
+  .divider { border: none; border-top: 1px solid var(--rule); margin: 18px 0; }
+  .muted { color: var(--soft); font-size: 12.5px; }
+  table.roster { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.roster th, table.roster td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.roster th { color: var(--soft); font-weight: 600; }
+  .badge { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: var(--paper); border: 1px solid var(--rule); }
+  .badge.ok { color: var(--green); border-color: var(--green); }
+  .badge.no { color: var(--maroon); border-color: var(--maroon); }
+  footer.note { margin-top: 22px; font-size: 11.5px; color: var(--soft); line-height: 1.6; border-top: 1px solid var(--rule); padding-top: 14px; }
+  .loading { color: var(--soft); font-size: 13px; padding: 20px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+(function () {
+  const state = {
+    tab: "vote",
+    structure: null,
+    phase: null,
+    session: null, // { role: 'voter'|'delegate', voter|delegate, votedG7 }
+    regNoInput: "",
+    error: "",
+    banner: "",
+    selections: {},
+    g7Selections: {},
+    receiptLookup: "",
+    receiptResult: null,
+    tally: null,
+    adminToken: sessionStorage.getItem("cusa_admin_token") || null,
+    adminPass: "",
+    adminError: "",
+    bulkVoters: "",
+    adminVoters: null,
+    integrityResult: null,
+    integrityLedger: "faculty",
+    tamperTarget: { ledger: "faculty", index: "" },
+    loading: true,
+  };
+
+  function esc(s) { return (s == null ? "" : String(s)).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  async function api(path, opts) {
+    opts = opts || {};
+    const headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+    if (opts.admin) headers["Authorization"] = "Bearer " + (state.adminToken || "");
+    const res = await fetch(path, {
+      method: opts.method || "GET",
+      headers,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    return { status: res.status, data };
+  }
+
+  async function loadStructure() {
+    const { data } = await api("/api/structure");
+    state.structure = data;
+    state.phase = data.phase;
+  }
+
+  async function refreshTally() {
+    const { data } = await api("/api/tally");
+    state.tally = data;
+    state.phase = data.phase;
+  }
+
+  async function init() {
+    render();
+    await loadStructure();
+    await refreshTally();
+    state.loading = false;
+    render();
+    setInterval(async () => { await refreshTally(); render(); }, 6000);
+  }
+
+  // ---------------- Voter flow ----------------
+
+  async function doLogin() {
+    state.error = "";
+    const regNo = state.regNoInput.trim().toUpperCase();
+    if (!regNo) { state.error = "Enter your registration number."; render(); return; }
+    const { data } = await api("/api/login", { method: "POST", body: { regNo } });
+    if (!data.ok) { state.error = data.error || "Login failed."; render(); return; }
+    state.session = data;
+    state.selections = {}; state.g7Selections = {};
+    render();
+  }
+
+  function selectFaculty(candidateId) { state.selections.faculty = candidateId; render(); }
+  function selectResidential(candidateName) { state.selections.residential = candidateName; render(); }
+  function selectG7(position, candidateName) { state.g7Selections[position] = candidateName; render(); }
+
+  async function submitFaculty() {
+    const regNo = state.session.voter.regNo;
+    const { data } = await api("/api/vote/faculty", { method: "POST", body: { regNo, candidateId: state.selections.faculty } });
+    if (!data.ok) { state.error = data.error; render(); return; }
+    state.banner = "Faculty Rep receipt: " + data.receiptCode;
+    state.session.voter.votedFaculty = true;
+    await refreshTally();
+    render();
+  }
+
+  async function submitResidential() {
+    const regNo = state.session.voter.regNo;
+    const { data } = await api("/api/vote/residential", { method: "POST", body: { regNo, candidateName: state.selections.residential } });
+    if (!data.ok) { state.error = data.error; render(); return; }
+    state.banner = "Residential (" + data.seat + ") receipt: " + data.receiptCode;
+    state.session.voter.votedResidential = true;
+    await refreshTally();
+    render();
+  }
+
+  async function submitG7() {
+    const regNo = state.session.delegate.id;
+    const { data } = await api("/api/vote/g7", { method: "POST", body: { regNo, choices: state.g7Selections } });
+    if (!data.ok) { state.error = data.error; render(); return; }
+    state.banner = "G7 receipt: " + data.receiptCode;
+    state.session.votedG7 = true;
+    await refreshTally();
+    render();
+  }
+
+  function logout() { state.session = null; state.regNoInput = ""; state.error = ""; state.banner = ""; state.selections = {}; state.g7Selections = {}; render(); }
+
+  // ---------------- Receipt lookup ----------------
+
+  async function lookupReceipt() {
+    const code = state.receiptLookup.trim();
+    if (!code) return;
+    const { data } = await api("/api/receipt/" + encodeURIComponent(code));
+    state.receiptResult = data;
+    render();
+  }
+
+  // ---------------- Admin ----------------
+
+  async function adminLogin() {
+    const { data } = await api("/api/admin/login", { method: "POST", body: { passcode: state.adminPass } });
+    if (!data.ok) { state.adminError = data.error; render(); return; }
+    state.adminToken = data.token;
+    sessionStorage.setItem("cusa_admin_token", data.token);
+    state.adminError = "";
+    await loadAdminVoters();
+    render();
+  }
+
+  async function loadAdminVoters() {
+    const { data } = await api("/api/admin/voters", { admin: true });
+    if (data.ok) state.adminVoters = data.voters;
+  }
+
+  async function uploadVoters() {
+    const lines = state.bulkVoters.trim().split("\n").map((l) => l.trim()).filter(Boolean);
+    const rows = lines.map((l) => {
+      const parts = l.split(",").map((p) => p.trim());
+      return { regNo: parts[0], name: parts[1], level: parts[2], faculty: parts[3], gender: parts[4], residency: parts[5] };
+    });
+    const { data } = await api("/api/admin/voters", { method: "POST", admin: true, body: { rows } });
+    if (data.ok) {
+      state.banner = "Added " + data.added + ", updated " + data.updated + ", skipped " + data.skipped + ". Roll now has " + data.total + " voters.";
+      state.bulkVoters = "";
+      await loadAdminVoters();
+    } else {
+      state.error = data.error;
+    }
+    render();
+  }
+
+  async function computeDelegates() {
+    const { data } = await api("/api/admin/compute-delegates", { method: "POST", admin: true });
+    if (!data.ok) { state.error = data.error; render(); return; }
+    await refreshTally();
+    render();
+  }
+
+  async function runIntegrity() {
+    const { data } = await api("/api/admin/integrity/" + state.integrityLedger, { admin: true });
+    state.integrityResult = data;
+    render();
+  }
+
+  async function simulateTamper() {
+    const { data } = await api("/api/admin/simulate-tamper", {
+      method: "POST", admin: true,
+      body: { ledger: state.tamperTarget.ledger, index: Number(state.tamperTarget.index) },
+    });
+    state.banner = data.ok ? data.message : data.error;
+    render();
+  }
+
+  async function resetVotes() {
+    if (!confirm("This clears all cast votes and delegate results (but keeps the voter roll). Continue?")) return;
+    await api("/api/admin/reset-votes", { method: "POST", admin: true });
+    await refreshTally();
+    render();
+  }
+
+  function adminLogout() {
+    state.adminToken = null;
+    sessionStorage.removeItem("cusa_admin_token");
+    render();
+  }
+
+  // ---------------- Render ----------------
+
+  function render() {
+    const app = document.getElementById("app");
+    if (state.loading) { app.innerHTML = '<div class="loading">Loading election data…</div>'; return; }
+
+    let html = "";
+    html += '<header class="top"><div class="brand"><div class="seal">CU</div><div><h1>CUSA Verifiable Digital Ballot</h1><p>Chuka University Students\' Association</p></div></div>';
+    html += '<nav class="tabs">';
+    [["vote","Cast Ballot"],["faculty","Faculty Reps"],["residential","Residential"],["g7","G7"],["receipt","My Receipt"],["integrity","Integrity"],["admin","Admin"]].forEach(([id,label]) => {
+      html += '<button data-tab="'+id+'" class="'+(state.tab===id?"active":"")+'">'+label+'</button>';
+    });
+    html += '</nav></header>';
+
+    if (state.banner) { html += '<div class="notice success">'+esc(state.banner)+'</div>'; }
+    if (state.error) { html += '<div class="notice error">'+esc(state.error)+'</div>'; }
+
+    if (state.tab === "vote") html += renderVote();
+    else if (state.tab === "faculty") html += renderFacultyTally();
+    else if (state.tab === "residential") html += renderResidentialTally();
+    else if (state.tab === "g7") html += renderG7Tab();
+    else if (state.tab === "receipt") html += renderReceipt();
+    else if (state.tab === "integrity") html += renderIntegrity();
+    else if (state.tab === "admin") html += renderAdmin();
+
+    html += '<footer class="note">Reference implementation. Student login here uses a registration number only — a real election should add a second factor (e.g. a one-time code to the student\'s official university email). Admin actions require a server-checked passcode, which is a real improvement over a client-only check, but is still a placeholder for real institutional admin authentication. See SECURITY-NOTES.md.</footer>';
+
+    app.innerHTML = html;
+    bind();
+  }
+
+  function renderVote() {
+    let h = '<div class="card">';
+    h += '<div class="row between" style="margin-bottom:16px;"><span class="status-pill '+(state.phase==="faculty"?"open":"closed")+'"><span class="dot"></span>'+(state.phase==="faculty"?"Faculty Rep & Residential voting open":"Faculty Rep & Residential closed — G7 delegate voting open")+'</span></div>';
+
+    if (!state.session) {
+      h += '<h2>Enter your registration number</h2><p class="desc">Bachelor\'s, Diploma, and Certificate students only. Masters and PhD registration numbers are not eligible to vote.</p>';
+      h += '<label for="reg-input">Registration number</label><input type="text" id="reg-input" value="'+esc(state.regNoInput)+'" placeholder="e.g. BED/1123/21" autocomplete="off">';
+      h += '<button class="primary" id="login-btn">Continue</button>';
+    } else if (state.session.role === "voter") {
+      const v = state.session.voter;
+      h += '<p class="muted">Logged in as <strong>'+esc(v.name)+'</strong> — '+esc(v.levelLabel)+', '+esc(v.faculty)+', '+esc(v.gender)+', '+esc(v.residency)+'</p>';
+      if (state.phase !== "faculty") {
+        h += '<div class="stamp"><div class="mark">i</div><h2>Voting closed for your races</h2><p>Faculty Rep and Residential voting has closed. G7 is now being decided by delegates.</p></div>';
+      } else {
+        if (!v.votedFaculty) {
+          const candidates = (state.structure.facultyCandidates[v.faculty] || []);
+          h += '<div class="position-block"><p class="position-title">Faculty Representative — '+esc(v.faculty)+'</p><p class="position-hint">Choose one candidate from your own faculty</p>';
+          candidates.forEach((c) => {
+            const sel = state.selections.faculty === c.id;
+            h += '<label class="candidate '+(sel?"selected":"")+'" data-fac-select="'+esc(c.id)+'"><input type="radio" name="fac" '+(sel?"checked":"")+'><span class="name">'+esc(c.name)+'</span><span class="party">'+esc(c.party)+'</span></label>';
+          });
+          h += '<button class="primary" id="submit-faculty-btn" style="margin-top:10px;" '+(state.selections.faculty?"":"disabled")+'>Submit Faculty Rep vote</button></div>';
+        } else {
+          h += '<div class="notice info">You\'ve already voted for Faculty Rep.</div>';
+        }
+
+        if (!v.votedResidential) {
+          const seat = v.gender === "male" ? "Male " : "Female ";
+          const seatFull = (v.gender === "male" ? "Male" : "Female") + " " + (v.residency === "resident" ? "Resident" : "Non-Resident");
+          const candidates = (state.structure.residentialCandidates[seatFull] || []);
+          h += '<div class="position-block"><p class="position-title">'+esc(seatFull)+'</p><p class="position-hint">Restricted to your own residency and gender only</p>';
+          candidates.forEach((c) => {
+            const sel = state.selections.residential === c.name;
+            h += '<label class="candidate '+(sel?"selected":"")+'" data-res-select="'+esc(c.name)+'"><input type="radio" name="res" '+(sel?"checked":"")+'><span class="name">'+esc(c.name)+'</span><span class="party">'+esc(c.party)+'</span></label>';
+          });
+          h += '<button class="primary" id="submit-residential-btn" style="margin-top:10px;" '+(state.selections.residential?"":"disabled")+'>Submit Residential vote</button></div>';
+        } else {
+          h += '<div class="notice info">You\'ve already voted for your Residential seat.</div>';
+        }
+      }
+      h += '<div style="margin-top:16px; text-align:center;"><button class="link" id="logout-btn">Log out</button></div>';
+    } else if (state.session.role === "delegate") {
+      const d = state.session.delegate;
+      h += '<p class="muted">Logged in as delegate <strong>'+esc(d.name)+'</strong> — '+esc(d.faculty)+'</p>';
+      if (state.session.votedG7) {
+        h += '<div class="stamp"><div class="mark">✓</div><h2>G7 ballot submitted</h2><p>Thank you for voting as a delegate.</p></div>';
+      } else if (state.phase !== "g7open") {
+        h += '<div class="notice info">G7 voting has not opened yet.</div>';
+      } else {
+        (state.structure.g7Positions || []).forEach((pos) => {
+          h += '<div class="position-block"><p class="position-title">'+esc(pos)+'</p><p class="position-hint">Choose one candidate</p>';
+          (state.structure.g7Candidates[pos] || []).forEach((c) => {
+            const sel = state.g7Selections[pos] === c.name;
+            h += '<label class="candidate '+(sel?"selected":"")+'" data-g7-select="'+esc(pos)+'|'+esc(c.name)+'"><input type="radio" name="g7-'+esc(pos)+'" '+(sel?"checked":"")+'><span class="name">'+esc(c.name)+'</span><span class="party">'+esc(c.party)+'</span></label>';
+          });
+          h += '</div>';
+        });
+        const allFilled = (state.structure.g7Positions || []).every((p) => state.g7Selections[p]);
+        h += '<button class="primary" id="submit-g7-btn" style="margin-top:14px;" '+(allFilled?"":"disabled")+'>Submit G7 ballot</button>';
+      }
+      h += '<div style="margin-top:16px; text-align:center;"><button class="link" id="logout-btn">Log out</button></div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function barRow(name, count, total, party) {
+    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+    return '<div class="result-row"><div class="r-head"><span class="r-name">'+esc(name)+(party?' <span class="party" style="margin-left:6px;">'+esc(party)+'</span>':'')+'</span><span class="r-count">'+count+' vote(s) · '+pct+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;"></div></div></div>';
+  }
+
+  function renderFacultyTally() {
+    let h = '<div class="card"><h2>Faculty Rep — Live Tally</h2><p class="desc">Each student votes only within their own faculty. Top 3 per faculty (gender-balanced) become G7 delegates once voting closes.</p>';
+    if (!state.tally) return h + '</div>';
+    (state.structure.faculties || []).forEach((f) => {
+      const tally = state.tally.facultyTally[f.code] || {};
+      const candidates = state.structure.facultyCandidates[f.code] || [];
+      const total = Object.values(tally).reduce((a,b)=>a+b,0);
+      h += '<p class="position-title" style="margin-top:16px;">'+esc(f.name)+'</p>';
+      candidates.forEach((c) => { h += barRow(c.name, tally[c.id]||0, total, c.party); });
+    });
+    h += '</div>';
+    return h;
+  }
+
+  function renderResidentialTally() {
+    let h = '<div class="card"><h2>Residential — Live Tally</h2><p class="desc">Each voter is locked to exactly one of the four seats: their own residency AND their own gender.</p>';
+    if (!state.tally) return h + '</div>';
+    (state.structure.residentialSeats || []).forEach((seat) => {
+      const tally = state.tally.residentialTally[seat] || {};
+      const candidates = state.structure.residentialCandidates[seat] || [];
+      const total = Object.values(tally).reduce((a,b)=>a+b,0);
+      h += '<p class="position-title" style="margin-top:16px;">'+esc(seat)+'</p>';
+      candidates.forEach((c) => { h += barRow(c.name, tally[c.name]||0, total, c.party); });
+    });
+    h += '</div>';
+    return h;
+  }
+
+  function renderG7Tab() {
+    let h = '<div class="card"><h2>Delegate Body</h2><p class="desc">Top 3 Faculty Rep vote-getters per faculty. If the top 3 are all one gender, the 4th place finisher swaps in for 3rd place if they are the opposite gender.</p>';
+    if (!state.tally || !state.tally.delegates) {
+      h += '<p class="muted">Delegates have not been computed yet — this happens once the electoral commission closes Faculty Rep voting.</p></div>';
+    } else {
+      Object.keys(state.tally.delegates).forEach((code) => {
+        const d = state.tally.delegates[code];
+        h += '<div class="position-block"><p class="position-title">'+esc(d.faculty)+(d.swapped?' <span class="badge ok">gender swap applied</span>':'')+(d.swapFailed?' <span class="badge no">gender imbalance — no swap available</span>':'')+'</p>';
+        d.chosen.forEach((c) => { h += '<p class="muted">'+esc(c.name)+' ('+esc(c.gender)+') — '+(c.votes||0)+' vote(s)</p>'; });
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+
+    h += '<div class="card"><h2>G7 — Live Tally (Delegates Only)</h2>';
+    if (!state.tally || !state.tally.g7Tally) { h += '<p class="muted">Not open yet.</p></div>'; return h; }
+    (state.structure.g7Positions || []).forEach((pos) => {
+      const tally = state.tally.g7Tally[pos] || {};
+      const candidates = state.structure.g7Candidates[pos] || [];
+      const total = Object.values(tally).reduce((a,b)=>a+b,0);
+      h += '<p class="position-title" style="margin-top:16px;">'+esc(pos)+'</p>';
+      candidates.forEach((c) => { h += barRow(c.name, tally[c.name]||0, total, c.party); });
+    });
+    h += '</div>';
+    return h;
+  }
+
+  function renderReceipt() {
+    let h = '<div class="card"><h2>Look Up My Receipt</h2><p class="desc">Enter the receipt code you received after voting to confirm your ballot was recorded exactly as cast.</p>';
+    h += '<label for="receipt-input">Receipt code</label><input type="text" id="receipt-input" value="'+esc(state.receiptLookup)+'" placeholder="e.g. A1B2C3D4E5">';
+    h += '<button class="primary" id="lookup-btn">Look up</button>';
+    if (state.receiptResult) {
+      if (state.receiptResult.ok) {
+        const e = state.receiptResult.entry;
+        h += '<div class="notice success" style="margin-top:14px;">Found in the <strong>'+esc(state.receiptResult.ledger)+'</strong> ledger, recorded at '+esc(e.timestamp)+'.<div class="receipt-code">'+esc(e.receiptCode)+'</div></div>';
+      } else {
+        h += '<div class="notice error" style="margin-top:14px;">'+esc(state.receiptResult.error)+'</div>';
+      }
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function renderIntegrity() {
+    let h = '<div class="card"><h2>Integrity Check</h2><p class="desc">Recomputes every hash in a ledger and confirms each entry still matches its own stored hash and links correctly to the one before it. Requires admin login (see Admin tab).</p>';
+    h += '<label for="integrity-select">Ledger</label><select id="integrity-select" style="width:100%; padding:10px; border:1px solid var(--rule); border-radius:7px; margin-bottom:14px; font:inherit;">';
+    ["faculty","residential","g7"].forEach((l) => { h += '<option value="'+l+'" '+(state.integrityLedger===l?"selected":"")+'>'+l+'</option>'; });
+    h += '</select><button class="primary" id="run-integrity-btn" '+(state.adminToken?"":"disabled")+'>'+(state.adminToken?"Run check":"Log in as admin first")+'</button>';
+    if (state.integrityResult) {
+      const r = state.integrityResult;
+      if (r.ok) {
+        h += '<div class="notice '+(r.valid?"success":"error")+'" style="margin-top:14px;">'+(r.valid ? ("All "+r.total+" entries verified — chain intact.") : ("Problems found in "+r.problems.length+" of "+r.total+" entries:"))+'</div>';
+        if (!r.valid) { r.problems.forEach((p) => { h += '<p class="muted">Entry '+p.index+': '+esc(p.issue)+'</p>'; }); }
+      } else {
+        h += '<div class="notice error" style="margin-top:14px;">'+esc(r.error)+'</div>';
+      }
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function renderAdmin() {
+    if (!state.adminToken) {
+      let h = '<div class="card"><h2>Admin Login</h2><p class="desc">Manage the voter roll, close Faculty Rep voting to compute delegates, and run integrity checks.</p>';
+      h += '<label for="admin-pass">Passcode</label><input type="password" id="admin-pass" value="'+esc(state.adminPass)+'">';
+      if (state.adminError) h += '<div class="notice error">'+esc(state.adminError)+'</div>';
+      h += '<button class="primary" id="admin-login-btn">Unlock</button><p class="muted" style="margin-top:12px;">Demo passcode: admin2026 (set ADMIN_PASSCODE env var to change it)</p></div>';
+      return h;
+    }
+
+    let h = '<div class="card"><div class="row between"><h2 style="margin:0;">Election Control</h2><button class="link" id="admin-logout-btn">Log out</button></div>';
+    h += '<p class="desc">'+(state.tally ? state.tally.counts.voters : 0)+' voters on roll · '+(state.tally ? state.tally.counts.faculty : 0)+' Faculty Rep ballots · '+(state.tally ? state.tally.counts.residential : 0)+' Residential ballots · '+(state.tally ? state.tally.counts.g7 : 0)+' G7 ballots</p>';
+    h += '<div class="row">';
+    h += '<button class="ghost" id="compute-delegates-btn" '+(state.phase!=="faculty"?"disabled":"")+'>Close Faculty Rep voting & compute delegates</button>';
+    h += '<button class="ghost" id="reset-votes-btn">Reset all votes (danger)</button>';
+    h += '</div></div>';
+
+    h += '<div class="card"><h2>Voter Roll</h2><p class="desc">Paste rows as: regNo, name, level (bachelors/diploma/certificate/masters/phd), faculty code, gender (male/female), residency (resident/non-resident)</p>';
+    h += '<textarea id="bulk-voters" placeholder="BED/9999/24, Jane Wafula, bachelors, FBUST, female, resident">'+esc(state.bulkVoters)+'</textarea>';
+    h += '<button class="primary" id="upload-voters-btn">Upload rows</button>';
+    if (state.adminVoters) {
+      h += '<hr class="divider"><table class="roster"><thead><tr><th>Reg No</th><th>Name</th><th>Level</th><th>Faculty</th><th>Gender</th><th>Residency</th><th>Voted</th></tr></thead><tbody>';
+      state.adminVoters.slice(0, 50).forEach((v) => {
+        const votedBadge = (v.votedFaculty?"F":"") + (v.votedResidential?"R":"");
+        h += '<tr><td>'+esc(v.regNo)+'</td><td>'+esc(v.name)+'</td><td>'+esc(v.level)+'</td><td>'+esc(v.faculty)+'</td><td>'+esc(v.gender)+'</td><td>'+esc(v.residency)+'</td><td>'+esc(votedBadge||"—")+'</td></tr>';
+      });
+      h += '</tbody></table>';
+      if (state.adminVoters.length > 50) h += '<p class="muted">Showing first 50 of '+state.adminVoters.length+'.</p>';
+    }
+    h += '</div>';
+
+    h += '<div class="card"><h2>Simulate Admin Tampering</h2><p class="desc">Directly edits a stored vote\'s data without recomputing its hash — the way a raw database edit would — so you can then run the Integrity Check and see it get caught.</p>';
+    h += '<div class="row"><select id="tamper-ledger" style="padding:10px; border:1px solid var(--rule); border-radius:7px; font:inherit;">';
+    ["faculty","residential","g7"].forEach((l) => { h += '<option value="'+l+'" '+(state.tamperTarget.ledger===l?"selected":"")+'>'+l+'</option>'; });
+    h += '</select><input type="text" id="tamper-index" placeholder="entry index (0, 1, 2…)" value="'+esc(state.tamperTarget.index)+'" style="max-width:200px; margin-bottom:0;">';
+    h += '<button class="ghost" id="tamper-btn">Tamper entry</button></div></div>';
+
+    return h;
+  }
+
+  function bind() {
+    document.querySelectorAll("[data-tab]").forEach((btn) => {
+      btn.onclick = async () => {
+        state.tab = btn.dataset.tab; state.error = ""; state.integrityResult = null;
+        if (state.tab === "admin" && state.adminToken) await loadAdminVoters();
+        render();
+      };
+    });
+
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) loginBtn.onclick = doLogin;
+    const regInput = document.getElementById("reg-input");
+    if (regInput) { regInput.oninput = (e) => { state.regNoInput = e.target.value; }; regInput.onkeydown = (e) => { if (e.key === "Enter") doLogin(); }; }
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) logoutBtn.onclick = logout;
+
+    document.querySelectorAll("[data-fac-select]").forEach((el) => { el.onclick = () => selectFaculty(el.dataset.facSelect); });
+    document.querySelectorAll("[data-res-select]").forEach((el) => { el.onclick = () => selectResidential(el.dataset.resSelect); });
+    document.querySelectorAll("[data-g7-select]").forEach((el) => { el.onclick = () => { const [pos, name] = el.dataset.g7Select.split("|"); selectG7(pos, name); }; });
+
+    const subFac = document.getElementById("submit-faculty-btn"); if (subFac) subFac.onclick = submitFaculty;
+    const subRes = document.getElementById("submit-residential-btn"); if (subRes) subRes.onclick = submitResidential;
+    const subG7 = document.getElementById("submit-g7-btn"); if (subG7) subG7.onclick = submitG7;
+
+    const lookupBtn = document.getElementById("lookup-btn"); if (lookupBtn) lookupBtn.onclick = lookupReceipt;
+    const receiptInput = document.getElementById("receipt-input");
+    if (receiptInput) { receiptInput.oninput = (e) => { state.receiptLookup = e.target.value; }; receiptInput.onkeydown = (e) => { if (e.key === "Enter") lookupReceipt(); }; }
+
+    const intSelect = document.getElementById("integrity-select");
+    if (intSelect) intSelect.onchange = (e) => { state.integrityLedger = e.target.value; };
+    const runIntBtn = document.getElementById("run-integrity-btn"); if (runIntBtn) runIntBtn.onclick = runIntegrity;
+
+    const adminPass = document.getElementById("admin-pass");
+    if (adminPass) { adminPass.oninput = (e) => { state.adminPass = e.target.value; }; adminPass.onkeydown = (e) => { if (e.key === "Enter") adminLogin(); }; }
+    const adminLoginBtn = document.getElementById("admin-login-btn"); if (adminLoginBtn) adminLoginBtn.onclick = adminLogin;
+    const adminLogoutBtn = document.getElementById("admin-logout-btn"); if (adminLogoutBtn) adminLogoutBtn.onclick = adminLogout;
+
+    const computeBtn = document.getElementById("compute-delegates-btn"); if (computeBtn) computeBtn.onclick = computeDelegates;
+    const resetBtn = document.getElementById("reset-votes-btn"); if (resetBtn) resetBtn.onclick = resetVotes;
+
+    const bulkArea = document.getElementById("bulk-voters"); if (bulkArea) bulkArea.oninput = (e) => { state.bulkVoters = e.target.value; };
+    const uploadBtn = document.getElementById("upload-voters-btn"); if (uploadBtn) uploadBtn.onclick = uploadVoters;
+
+    const tamperLedger = document.getElementById("tamper-ledger"); if (tamperLedger) tamperLedger.onchange = (e) => { state.tamperTarget.ledger = e.target.value; };
+    const tamperIndex = document.getElementById("tamper-index"); if (tamperIndex) tamperIndex.oninput = (e) => { state.tamperTarget.index = e.target.value; };
+    const tamperBtn = document.getElementById("tamper-btn"); if (tamperBtn) tamperBtn.onclick = simulateTamper;
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

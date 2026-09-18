@@ -1,0 +1,188 @@
+{
+  "phase": "faculty",
+  "voters": {
+    "BED/1123/21": {
+      "regNo": "BED/1123/21",
+      "name": "Ann Mumbi",
+      "level": "bachelors",
+      "faculty": "FERD",
+      "gender": "female",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "BCOM/0456/22": {
+      "regNo": "BCOM/0456/22",
+      "name": "Peter Kamau",
+      "level": "bachelors",
+      "faculty": "FBUST",
+      "gender": "male",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "BSC-CS/0789/20": {
+      "regNo": "BSC-CS/0789/20",
+      "name": "Grace Njeri",
+      "level": "bachelors",
+      "faculty": "FAST",
+      "gender": "female",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "BED/2233/21": {
+      "regNo": "BED/2233/21",
+      "name": "Samuel Kiptoo",
+      "level": "bachelors",
+      "faculty": "FERD",
+      "gender": "male",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "AGRI/0345/23": {
+      "regNo": "AGRI/0345/23",
+      "name": "Mercy Wanjiku",
+      "level": "bachelors",
+      "faculty": "FAES",
+      "gender": "female",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "BCOM/1122/22": {
+      "regNo": "BCOM/1122/22",
+      "name": "John Mwangi",
+      "level": "bachelors",
+      "faculty": "FBUST",
+      "gender": "male",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "BSC-IT/0987/21": {
+      "regNo": "BSC-IT/0987/21",
+      "name": "Lucy Achieng",
+      "level": "bachelors",
+      "faculty": "LAW",
+      "gender": "female",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "ED-ARTS/0654/23": {
+      "regNo": "ED-ARTS/0654/23",
+      "name": "Kevin Ochieng",
+      "level": "bachelors",
+      "faculty": "LAW",
+      "gender": "male",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "ENG/0221/22": {
+      "regNo": "ENG/0221/22",
+      "name": "Denish Ouma",
+      "level": "bachelors",
+      "faculty": "FENG",
+      "gender": "male",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "NPH/0812/23": {
+      "regNo": "NPH/0812/23",
+      "name": "Frolence Mbithe",
+      "level": "bachelors",
+      "faculty": "NPH",
+      "gender": "female",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "HSS/0341/21": {
+      "regNo": "HSS/0341/21",
+      "name": "Dorica Moraa",
+      "level": "bachelors",
+      "faculty": "FHSS",
+      "gender": "female",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "AST/0198/22": {
+      "regNo": "AST/0198/22",
+      "name": "Shanice Kendi",
+      "level": "bachelors",
+      "faculty": "FAST",
+      "gender": "female",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "DIP-BUS/0099/24": {
+      "regNo": "DIP-BUS/0099/24",
+      "name": "Faith Chebet",
+      "level": "diploma",
+      "faculty": "FBUST",
+      "gender": "female",
+      "residency": "resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "CERT-IT/0055/24": {
+      "regNo": "CERT-IT/0055/24",
+      "name": "Brian Otieno",
+      "level": "certificate",
+      "faculty": "FAST",
+      "gender": "male",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "MSC-CD/0044/24": {
+      "regNo": "MSC-CD/0044/24",
+      "name": "Onyango J. Bill",
+      "level": "masters",
+      "faculty": "FHSS",
+      "gender": "male",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    },
+    "PHD-AGEC/0011/23": {
+      "regNo": "PHD-AGEC/0011/23",
+      "name": "Wilson Karanja",
+      "level": "phd",
+      "faculty": "FAES",
+      "gender": "male",
+      "residency": "non-resident",
+      "votedFaculty": false,
+      "votedResidential": false,
+      "votedG7": false
+    }
+  },
+  "ledgers": {
+    "faculty": [],
+    "residential": [],
+    "g7": []
+  },
+  "delegates": null,
+  "g7Voted": {}
+}
